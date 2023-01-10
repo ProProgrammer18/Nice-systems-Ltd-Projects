@@ -2,7 +2,6 @@ const fs = require("fs");
 const dataModel = require("../database/dataSchema");
 
 const upload = fs.readFileSync("public/html/upload.html", "utf-8");
-
 exports.uploadFile = async (req, res) => {
   try {
     res.end(upload);
@@ -53,18 +52,39 @@ exports.separateData = (file, filename) => {
   return listOfRows;
 };
 
+exports.convertToDate = (givenDate) => {
+  let gd = givenDate.split("/");
+
+  let DD = parseInt(gd[0]);
+  let MM = parseInt(gd[1]) - 1;
+  let YY = parseInt(gd[2].split("-")[0]);
+  let time = gd[2].split("-")[1].split(":");
+  let hh = parseInt(time[0]) + 6;
+  let mm = parseInt(time[1]) - 30;
+  let ss = 0;
+  let ms = 0;
+
+  // ! SOME PROBLEM WITH THE TIME (Running 5 hrs 30 mins behind for some reason)
+
+  date = new Date(YY, MM, DD, hh, mm, ss, ms);
+  return date;
+};
+
 exports.findExtremeDates = (req, listOfRows) => {
   let allDates = [];
+
   listOfRows.forEach((ele) => {
-    allDates.push(ele.reqTime);
+    allDates.push(this.convertToDate(ele.reqTime));
+    allDates.push(this.convertToDate(ele.resTime));
   });
+
   let minDate = new Date(Math.min.apply(null, allDates));
   let maxDate = new Date(Math.max.apply(null, allDates));
   req.minDate = minDate;
   req.maxDate = maxDate;
 };
 
-exports.loadFile = async (req, res) => {
+exports.loadFile = async (req, res, next) => {
   try {
     console.log(req.file);
     const filepath =
@@ -72,9 +92,7 @@ exports.loadFile = async (req, res) => {
     let file = fs.readFileSync("public/" + filepath, "utf-8");
     req.listOfRows = this.separateData(file, req.file.filename);
     this.findExtremeDates(req, req.listOfRows);
-    let data = await dataModel.find();
-    console.log(data);
-    res.end("DONED");
+    next();
   } catch (err) {
     console.log(err);
     res.status(400).json({
@@ -84,11 +102,16 @@ exports.loadFile = async (req, res) => {
   }
 };
 
-exports.saveData = async (req, res) => {
+exports.saveData = async (req, res, next) => {
   try {
-    dataModel.insertMany(req.listOfRows);
-    console.log("Data uploaded");
-    res.end(file);
+    if (req.prevFileFound) {
+      console.log("File already found !!");
+      res.end("File already found !!");
+    } else {
+      dataModel.insertMany(req.listOfRows);
+      console.log("Data uploaded");
+      res.end("Graph here");
+    }
   } catch (err) {
     console.log(err);
     res.status(400).json({

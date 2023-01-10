@@ -3,6 +3,8 @@ const dotenv = require("dotenv").config();
 
 const database_password = process.env.DATABASE_PASSWORD;
 const dataModel = require("../database/dataSchema");
+const fileModel = require("../database/fileSchema");
+
 const database_url = process.env.DATABASE_URL.replace(
   "<password>",
   database_password
@@ -14,6 +16,7 @@ mongoose.connect(database_url, () => {
 
 let del = async () => {
   await dataModel.deleteMany();
+  await fileModel.deleteMany();
   console.log("Data Deleted");
   process.exit();
 };
