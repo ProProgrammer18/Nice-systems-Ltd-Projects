@@ -31,25 +31,29 @@ exports.getAllData = async (req, res) => {
 };
 
 exports.separateData = (file, filename) => {
-  let listOfRows = [];
-  file.split("\n").forEach((element) => {
-    let row = element.split("|");
-    let totProTime =
-      parseInt(row[5].trim().split(":")[0]) * 60 +
-      parseInt(row[5].trim().split(":")[1]);
-    let data = {
-      reqURL: row[0].trim(),
-      endpoint: row[1].trim(),
-      type: row[2].trim(),
-      reqTime: row[3].trim(),
-      resTime: row[4].trim(),
-      totProTime: totProTime,
-      status: row[6].trim(),
-      filename: filename.trim(),
-    };
-    listOfRows.push(data);
-  });
-  return listOfRows;
+  try {
+    let listOfRows = [];
+    file.split("\n").forEach((element) => {
+      let row = element.split("|");
+      let totProTime =
+        parseInt(row[5].trim().split(":")[0]) * 60 +
+        parseInt(row[5].trim().split(":")[1]);
+      let data = {
+        reqURL: row[0].trim(),
+        endpoint: row[1].trim(),
+        type: row[2].trim(),
+        reqTime: row[3].trim(),
+        resTime: row[4].trim(),
+        totProTime: totProTime,
+        status: row[6].trim(),
+        filename: filename.trim(),
+      };
+      listOfRows.push(data);
+    });
+    return listOfRows;
+  } catch {
+    console.log("File not present in required format!!");
+  }
 };
 
 exports.convertToDate = (givenDate) => {
@@ -87,11 +91,18 @@ exports.findExtremeDates = (req, listOfRows) => {
 exports.loadFile = async (req, res, next) => {
   try {
     console.log(req.file);
+
     const filepath =
       req.file.destination.split("/")[1] + "/" + req.file.filename;
+
+    req.filepathOfNewFile = "public/" + filepath;
+
     let file = fs.readFileSync("public/" + filepath, "utf-8");
+
     req.listOfRows = this.separateData(file, req.file.filename);
+
     this.findExtremeDates(req, req.listOfRows);
+
     next();
   } catch (err) {
     console.log(err);
@@ -106,11 +117,15 @@ exports.saveData = async (req, res, next) => {
   try {
     if (req.prevFileFound) {
       console.log("File already found !!");
-      res.end("File already found !!");
+      res.status(201).json({
+        message: "File with similar data already exists",
+      });
     } else {
       dataModel.insertMany(req.listOfRows);
       console.log("Data uploaded");
-      res.end("Graph here");
+      res.status(200).json({
+        message: "File upload successful!!",
+      });
     }
   } catch (err) {
     console.log(err);

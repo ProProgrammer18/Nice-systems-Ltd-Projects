@@ -1,3 +1,4 @@
+const fs = require("fs");
 const fileModel = require("../database/fileSchema");
 
 exports.checkPrevFiles = async (req, res, next) => {
@@ -19,6 +20,7 @@ exports.checkPrevFiles = async (req, res, next) => {
     });
 
     if (fRT || lRT) {
+      deleteFile(req, res);
       req.prevFileFound = 1;
       next();
     } else {
@@ -27,6 +29,23 @@ exports.checkPrevFiles = async (req, res, next) => {
       console.log("File stored !!");
       next();
     }
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      status: "Failed",
+      err: err,
+    });
+  }
+};
+
+let deleteFile = async (req, res) => {
+  try {
+    await fs.unlink(req.filepathOfNewFile, (err) => {
+      if (err) {
+        throw err;
+      }
+      console.log("File deleted as previous file has same data...");
+    });
   } catch (err) {
     console.log(err);
     res.status(400).json({

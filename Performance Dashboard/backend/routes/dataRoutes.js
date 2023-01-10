@@ -20,7 +20,7 @@ const upload = multer({ storage: multerStorage });
 router.get("/", dataController.uploadFile);
 
 router.post(
-  "/sendFile",
+  "/insert",
   upload.single("data"),
   dataController.loadFile,
   fileController.checkPrevFiles,
