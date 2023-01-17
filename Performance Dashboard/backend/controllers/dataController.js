@@ -36,14 +36,15 @@ exports.separateData = (file, filename) => {
     file.split("\n").forEach((element) => {
       let row = element.split("|");
       let totProTime =
-        parseInt(row[5].trim().split(":")[0]) * 60 +
+        parseInt(row[5].trim().split(":")[0]) +
         parseInt(row[5].trim().split(":")[1]);
+
       let data = {
         reqURL: row[0].trim(),
         endpoint: row[1].trim(),
         type: row[2].trim(),
-        reqTime: row[3].trim(),
-        resTime: row[4].trim(),
+        reqTime: new Date(new Date(row[3].trim()).getTime() + 19800000),
+        resTime: new Date(new Date(row[4].trim()).getTime() + 19800000),
         totProTime: totProTime,
         status: row[6].trim(),
         filename: filename.trim(),
@@ -57,20 +58,21 @@ exports.separateData = (file, filename) => {
 };
 
 exports.convertToDate = (givenDate) => {
-  let gd = givenDate.split("/");
+  // let gd = givenDate.split("/");
 
-  let DD = parseInt(gd[0]);
-  let MM = parseInt(gd[1]) - 1;
-  let YY = parseInt(gd[2].split("-")[0]);
-  let time = gd[2].split("-")[1].split(":");
-  let hh = parseInt(time[0]) + 6;
-  let mm = parseInt(time[1]) - 30;
-  let ss = 0;
-  let ms = 0;
+  // let DD = parseInt(gd[0]);
+  // let MM = parseInt(gd[1]) - 1;
+  // let YY = parseInt(gd[2].split("-")[0]);
+  // let time = gd[2].split("-")[1].split(":");
+  // let hh = parseInt(time[0]) + 6;
+  // let mm = parseInt(time[1]) - 30;
+  // let ss = 0;
+  // let ms = 0;
 
-  // ! SOME PROBLEM WITH THE TIME (Running 5 hrs 30 mins behind for some reason)
+  // // ! SOME PROBLEM WITH THE TIME (Running 5 hrs 30 mins behind for some reason)
 
-  date = new Date(YY, MM, DD, hh, mm, ss, ms);
+  // date = new Date(YY, MM, DD, hh, mm, ss, ms);
+  const date = new Date(new Date(givenDate).getTime() + 19800000);
   return date;
 };
 
@@ -135,3 +137,44 @@ exports.saveData = async (req, res, next) => {
     });
   }
 };
+
+exports.filterData = async (req, res) => {
+  try {
+    let data = await dataModel.find({
+      reqTime: {
+        $gte: req.body.startDate,
+        $lte: req.body.endDate,
+      },
+    });
+    var webcnt=0,mobilecnt=0;
+    ResponseWeb = new Map();
+    ResponseMobile = new Map();
+    for(let i=0;i<data.length;i++){
+      if(data[i].type=="Web"){
+        webcnt++;
+        if(!ResponseWeb[data[i].status]){
+          ResponseWeb[data[i].status]=1;
+        }
+        else{
+          ResponseWeb[data[i].status]++;
+        }
+      }
+      else{
+        mobilecnt++;
+        if(!ResponseMobile[data[i].status]){
+          ResponseMobile[data[i].status]=1;
+        }
+        else{
+          ResponseMobile[data[i].status]++;
+        }
+      }
+    }
+    res.status(200).send({webcnt:webcnt,mobilecnt:mobilecnt,ResponseWeb:ResponseWeb,ResponseMobile:ResponseMobile});
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      status: "Failed in fetching data",
+      err: err,
+    });
+  }
+}
