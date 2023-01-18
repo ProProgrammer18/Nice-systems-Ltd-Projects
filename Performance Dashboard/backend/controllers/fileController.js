@@ -19,7 +19,7 @@ exports.checkPrevFiles = async (req, res, next) => {
       }
     });
 
-    if (fRT || lRT) {
+    if (fRT && lRT) {
       deleteFile(req, res);
       req.prevFileFound = 1;
       next();
@@ -31,7 +31,7 @@ exports.checkPrevFiles = async (req, res, next) => {
     }
   } catch (err) {
     console.log(err);
-    res.status(400).json({
+    res.status(500).json({
       status: "Failed",
       err: err,
     });

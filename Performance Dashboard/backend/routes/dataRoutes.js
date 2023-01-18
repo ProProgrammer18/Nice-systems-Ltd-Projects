@@ -5,17 +5,9 @@ const fileController = require("../controllers/fileController");
 
 const multer = require("multer");
 
-const multerStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/dataFiles");
-  },
-  filename: (req, file, cb) => {
-    const ext = file.mimetype.split("/")[1];
-    cb(null, `${Date.now()}-${file.originalname}`);
-  },
-});
+const storage = multer.memoryStorage();
 
-const upload = multer({ storage: multerStorage });
+const upload = multer({ storage: storage });
 
 router.get("/", dataController.uploadFile);
 

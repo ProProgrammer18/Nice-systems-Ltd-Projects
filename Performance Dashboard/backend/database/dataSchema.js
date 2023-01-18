@@ -26,7 +26,7 @@ const dataSchema = new mongoose.Schema({
     required: [true, "Total Processing time required"],
   },
   status: {
-    type: String,
+    type: Number,
     required: [true, "request status required"],
   },
   filename: {
