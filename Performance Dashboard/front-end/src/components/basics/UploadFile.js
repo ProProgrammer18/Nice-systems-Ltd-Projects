@@ -2,9 +2,7 @@ import React from "react";
 import { useState } from "react";
 import axios from "axios";
 import "./UploadFile.css";
-import {useNavigate} from 'react-router-dom';
-
-
+import { useNavigate } from "react-router-dom";
 
 const UploadFile = () => {
   const [file, setFile] = useState(""); // storing the uploaded file
@@ -15,9 +13,9 @@ const UploadFile = () => {
         const formData = new FormData();
         formData.append("data", file);
         const res = await axios.post("http://localhost:5000/insert", formData);
-        if (res.status === 200) {
+        if (res.status === 201) {
           alert("File Uploaded Successfully");
-        } else if (res.status === 201) {
+        } else if (res.status === 200) {
           alert("File already exists");
         }
       }
@@ -42,7 +40,7 @@ const UploadFile = () => {
             <div id="button" className="row">
               <button onClick={SubmitButton}>Submit</button>
               <br />
-              <button onClick={()=>navigate("/date")}>Show Graph</button>
+              <button onClick={() => navigate("/date")}>Show Graph</button>
             </div>
           </div>
         </div>

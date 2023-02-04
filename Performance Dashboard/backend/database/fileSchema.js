@@ -9,12 +9,16 @@ const fileSchema = new mongoose.Schema({
     type: Date,
     required: [true, "lastReqTime required"],
   },
-  filename: {
+  fileId: {
     type: String,
     required: [true, "Filename required"],
   },
 });
 
-const fileModel = mongoose.model("fileModel", fileSchema, "file");
+const fileModel = mongoose.model(
+  "fileModel",
+  fileSchema,
+  "Files_Uploaded_Model"
+);
 
 module.exports = fileModel;

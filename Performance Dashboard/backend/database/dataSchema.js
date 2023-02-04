@@ -29,12 +29,12 @@ const dataSchema = new mongoose.Schema({
     type: Number,
     required: [true, "request status required"],
   },
-  filename: {
+  fileId: {
     type: String,
     required: [true, "Filename required"],
   },
 });
 
-const dataModel = mongoose.model("dataModel", dataSchema, "data");
+const dataModel = mongoose.model("dataModel", dataSchema, "Request_Logs_Model");
 
 module.exports = dataModel;

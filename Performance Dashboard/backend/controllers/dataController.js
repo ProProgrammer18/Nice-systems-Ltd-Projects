@@ -113,7 +113,7 @@ exports.saveData = async (req, res, next) => {
   try {
     if (req.prevFileFound) {
       console.log("File already found !!");
-      res.status(201).json({
+      res.status(200).json({
         message: "File with similar data already exists",
       });
     } else {
@@ -135,22 +135,24 @@ exports.saveData = async (req, res, next) => {
 
       let dataToBeUploaded = [];
 
+      // Sort listOfRows, check the need of sorting this array if data present in alreadyPresentData is already sorted
       req.listOfRows.forEach(async (ele) => {
         if (
           alreadyPresentData.findIndex(
             (item) => JSON.stringify(item) === JSON.stringify(ele)
           ) == -1
         ) {
-          ele.filename = req.file.filename.trim();
+          ele.fileId = req.fileId.trim();
           dataToBeUploaded.push(ele);
         }
       });
 
+      // Sort the data to be uploaded
       await dataModel.insertMany(dataToBeUploaded);
 
       console.log("Data uploaded");
 
-      res.status(200).json({
+      res.status(201).json({
         message: "File upload successful!!",
       });
     }
