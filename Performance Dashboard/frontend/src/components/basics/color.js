@@ -1,15 +1,15 @@
 export default function colorManager (isLight, response){
     function getColour(response) {
         if (response >= 100 && response <= 200) {
-            return "#FFD700";
+            return "#ACE7A4";
         } else if (response > 200 && response < 300) {
-            return "#228B22";
+            return "#84BE6A";
         } else if (response >= 300 && response < 400) {
             return "#FFA500";
         } else if (response >= 400 && response < 500) {
-            return "#FF0000";
+            return "#FF8888";
         } else if (response >= 500 && response < 600) {
-            return "#0000FF";
+            return "#FDF7B8";
         } else {
             return "#000000";
         }

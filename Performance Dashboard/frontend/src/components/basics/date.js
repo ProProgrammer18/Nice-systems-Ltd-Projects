@@ -24,7 +24,9 @@ const SubmitButton = async() => {
           if (res.status === 200) {
             navigate('/Stackbar', { state: { data: res.data, startDate: Graphdata.startDate, endDate: Graphdata.endDate } });
           }
-
+      }
+      else{
+        alert("Please enter all the fields");
       }
     }
     catch (error) {
@@ -33,20 +35,23 @@ const SubmitButton = async() => {
   }
   return (
    <>
-   <form action="#">
         <div id="loginform">
-          <h2 id="headerTitle">Enter start date and End date</h2>
+          <h2 id="headerTitle">Enter Date and Time</h2>
           <div>
             <div className="row">
+              <label style={{fontWeight:'bold', color:'black'}}>Start Date</label>
             <input
                 type="date" value = {startDate} onChange={(e) => setStartDate(e.target.value)}
               />
+              <label style={{fontWeight:'bold', color:'black'}}>Start Time</label>
               <input
                 type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)}
               />
+              <label style={{fontWeight:'bold', color:'black'}}>End Date</label>
                <input
                 type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)}
               />
+              <label style={{fontWeight:'bold', color:'black'}}>End Time</label>
               <input
                 type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)}
                 />
@@ -57,7 +62,7 @@ const SubmitButton = async() => {
             </div>
         </div>
         </div>
-      </form>
+      
           
    </>
   )
