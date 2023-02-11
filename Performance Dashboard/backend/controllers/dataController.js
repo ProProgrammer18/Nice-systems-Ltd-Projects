@@ -217,6 +217,8 @@ exports.getReqPerMin = async (req, res, next) => {
     let reqPerMin = new Map();
     data.forEach((req) => {
       let reqTime = req.reqTime.toString();
+      let timeLen = reqTime.split(" GMT")[0].length;
+      reqTime = reqTime.split(" GMT")[0].slice(0, timeLen - 3);
       let count = reqPerMin.get(reqTime) || 0;
       reqPerMin.set(reqTime, count + 1);
     });
