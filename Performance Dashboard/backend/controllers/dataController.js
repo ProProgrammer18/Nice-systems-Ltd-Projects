@@ -135,7 +135,6 @@ exports.saveData = async (req, res, next) => {
 
       let dataToBeUploaded = [];
 
-      // Sort listOfRows, check the need of sorting this array if data present in alreadyPresentData is already sorted
       req.listOfRows.forEach(async (ele) => {
         if (
           alreadyPresentData.findIndex(
@@ -147,7 +146,6 @@ exports.saveData = async (req, res, next) => {
         }
       });
 
-      // Sort the data to be uploaded
       await dataModel.insertMany(dataToBeUploaded);
 
       console.log("Data uploaded");
@@ -167,12 +165,8 @@ exports.saveData = async (req, res, next) => {
 
 exports.filterData = async (req, res) => {
   try {
-    let data = await dataModel.find({
-      reqTime: {
-        $gte: req.body.startDate,
-        $lte: req.body.endDate,
-      },
-    });
+    let data = req.requiredData;
+
     var webcnt = 0,
       mobilecnt = 0;
     ResponseWeb = new Map();
@@ -199,7 +193,35 @@ exports.filterData = async (req, res) => {
       mobilecnt: mobilecnt,
       ResponseWeb: ResponseWeb,
       ResponseMobile: ResponseMobile,
+      reqPerMin: req.reqPerMinObj,
     });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      status: "Failed in fetching data",
+      err: err,
+    });
+  }
+};
+
+exports.getReqPerMin = async (req, res, next) => {
+  try {
+    let data = await dataModel.find({
+      reqTime: {
+        $gte: req.body.startDate,
+        $lte: req.body.endDate,
+      },
+    });
+    req.requiredData = data;
+
+    let reqPerMin = new Map();
+    data.forEach((req) => {
+      let reqTime = req.reqTime.toString();
+      let count = reqPerMin.get(reqTime) || 0;
+      reqPerMin.set(reqTime, count + 1);
+    });
+    req.reqPerMinObj = Object.fromEntries(reqPerMin);
+    next();
   } catch (err) {
     console.log(err);
     res.status(500).json({

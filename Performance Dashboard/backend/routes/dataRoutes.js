@@ -21,6 +21,10 @@ router.post(
 
 router.get("/allData", dataController.getAllData);
 
-router.post("/filterData", dataController.filterData);
+router.post(
+  "/filterData",
+  dataController.getReqPerMin,
+  dataController.filterData
+);
 
 module.exports = router;
