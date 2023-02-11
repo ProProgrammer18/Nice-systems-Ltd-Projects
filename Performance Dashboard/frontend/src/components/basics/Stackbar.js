@@ -11,11 +11,12 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
-
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
+  ChartDataLabels,
   Title,
   Tooltip,
   Legend
@@ -51,9 +52,13 @@ export default function Stackbar() {
   const endingTime = fomatTime(date1);
 
   console.log(graphdata);
+  
 
 const options = {
   plugins: {
+    ChartDataLabels: {
+      display: true,
+    },
     title: {
       display: true,
       text: 'Total Web and Mobile Requests for Date Range '+startingDate+ ' on '+startingTime+' to '+endingDate+' on '+endingTime,
@@ -103,6 +108,9 @@ for(var key in graphdata?.ResponseWeb){
     // backgroundColor: `#${Math.floor(Math.random() * 16777215).toString(16)}`
     // borderColor : colorManager(true,key),
     backgroundColor : colorManager(false,key),
+    ChartDataLabels : {
+      color: 'white',
+    },
     barThickness: 80,
   })
 }
@@ -122,7 +130,6 @@ const data = {
         <Bar options={options} 
          
         data={data} />
-
       </div>
     </div>
   );
