@@ -51,6 +51,7 @@ export default function Stackbar() {
   const startingTime = fomatTime(date);
   const endingTime = fomatTime(date1);
 
+
   console.log(graphdata);
   
 
@@ -71,15 +72,15 @@ const options = {
       position: 'right',
     },
   },
-  // elements: {
-  //   bar: {
-  //     borderWidth: 2,
-  //   },
-  //   column: {
-  //     borderRadius: 10,
-  //     width: 10,
-  //   },
-  // },
+  elements: {
+    bar: {
+      borderWidth: 0.5,
+    },
+    column: {
+      borderRadius: 10,
+      width: 10,
+    },
+  },
   responsive: true,
   scales: {
     x: {
@@ -106,7 +107,7 @@ for(var key in graphdata?.ResponseWeb){
     data: [graphdata?.ResponseWeb[key], graphdata?.ResponseMobile[key]],
     // borderColor: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
     // backgroundColor: `#${Math.floor(Math.random() * 16777215).toString(16)}`
-    // borderColor : colorManager(true,key),
+    borderColor : colorManager(true,key),
     backgroundColor : colorManager(false,key),
     ChartDataLabels : {
       color: 'white',
@@ -120,6 +121,71 @@ const data = {
   datasets: dataset,
 };
 
+const options1 = {
+    plugins: {
+      title : {
+        display: true,
+        text:'Total Requests per min for Date range '+startingDate+ ' on '+startingTime+' to '+endingDate+' on '+endingTime,
+        font : {
+          size: 20,
+          weight: 'bold',
+        },
+      },
+      legend: {
+
+        position: 'right',
+      },
+    },
+    scales : {
+      y : {
+        beginAtZero : true,
+      }
+    }
+};
+
+const labels1 = [];
+for(var key1 in graphdata?.reqPerMin){
+  labels1.push(key1);
+}
+// console.log(labels1);
+
+const dataset1 = [];
+for(var key2 in graphdata?.reqPerMin){
+  dataset1.push(graphdata?.reqPerMin[key2]);
+}
+// console.log(dataset1)
+// for (var key2 in graphdata?.reqPerMin){
+//   dataset1.push({
+//     // label: 'Count of Requests',
+//     data: [graphdata?.reqPerMin[key2]],
+//     // borderColor: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+//     // backgroundColor: `#${Math.floor(Math.random() * 16777215).toString(16)}`
+//     // borderColor : colorManager(true,key),
+//     // backgroundColor : colorManager(false,key2),
+//     backgroundColor: 'rgba(255, 99, 132, 0.2)',
+//     borderColor: 'rgba(255, 99, 132, 1)',
+//     borderWidth: 0.5,
+//     // barThickness: 100,
+//   })
+// }
+
+const data1 = {
+  // labels: ['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12', 't13', 't14', 't15', 't16', 't17', 't18', 't19', 't20', 't21', 't22', 't23', 't24', 't25', 't26', 't27', 't28', 't29'],
+  labels : labels1,
+  datasets: [
+    {
+      label: 'Count of Requests',
+      // data: [1, 1, 2, 3, 2, 1, 1, 1, 1, 3, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 3],
+      data: dataset1,
+      backgroundColor: 'rgba(255, 99, 132, 0.2)',
+      borderColor: 'rgba(255, 99, 132, 1)',
+      borderWidth: 1,
+      // barThickness: 20,
+    },
+  ],
+  // datasets: dataset1,
+};
+
   return (
 
     <div className="App" style ={{justifyContent:'center', display:'flex'}}>
@@ -130,6 +196,8 @@ const data = {
         <Bar options={options} 
          
         data={data} />
+
+        <Bar data={data1} options={options1} />
       </div>
     </div>
   );
