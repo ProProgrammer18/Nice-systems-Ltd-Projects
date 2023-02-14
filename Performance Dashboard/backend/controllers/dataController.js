@@ -204,6 +204,19 @@ exports.filterData = async (req, res) => {
   }
 };
 
+const fomatTime = (reqTime) => {
+  let date = new Date(reqTime);
+  let hours = date.getHours();
+  let minutes = date.getMinutes();
+  if(hours < 10){
+    hours = '0'+hours;
+  }
+  if(minutes < 10){
+    minutes = '0'+minutes;
+  }
+  return hours+':'+minutes;
+}
+
 exports.getReqPerMin = async (req, res, next) => {
   try {
     let data = await dataModel.find({
@@ -216,9 +229,11 @@ exports.getReqPerMin = async (req, res, next) => {
 
     let reqPerMin = new Map();
     data.forEach((req) => {
-      let reqTime = req.reqTime.toString();
-      let timeLen = reqTime.split(" GMT")[0].length;
-      reqTime = reqTime.split(" GMT")[0].slice(0, timeLen - 3);
+      // let reqTime = req.reqTime.toString();
+      let reqTime = new Date(req.reqTime.getTime() - 19800000);
+      // let timeLen = reqTime.split(" GMT")[0].length;
+      // reqTime = reqTime.split(" GMT")[0].slice(0, timeLen - 3);
+      reqTime = fomatTime(reqTime);
       let count = reqPerMin.get(reqTime) || 0;
       reqPerMin.set(reqTime, count + 1);
     });

@@ -85,7 +85,7 @@ const options = {
   scales: {
     x: {
       stacked: true,
-      // barThickness: 1000,
+      // barThickness: 80,
     },
     y: {
       stacked: true,
@@ -132,7 +132,6 @@ const options1 = {
         },
       },
       legend: {
-
         position: 'right',
       },
     },
