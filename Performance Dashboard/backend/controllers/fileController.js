@@ -7,7 +7,9 @@ exports.checkPrevFiles = async (req, res, next) => {
     const firstReqTime = req.minDate;
     const lastReqTime = req.maxDate;
 
-    const files = await fileModel.find();
+    const files = await fileModel.find({
+      companyName: req.body.companyName,
+    });
 
     const currentDate = new Date()
       .toISOString()
