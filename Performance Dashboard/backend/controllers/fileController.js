@@ -28,8 +28,8 @@ exports.checkPrevFiles = async (req, res, next) => {
       lRT = 0;
     files.forEach((ele) => {
       if (
-        ele.firstReqTime.getTime() == firstReqTime.getTime() &&
-        ele.lastReqTime.getTime() == lastReqTime.getTime()
+        ele.firstReqTime.getTime() <= firstReqTime.getTime() &&
+        ele.lastReqTime.getTime() >= lastReqTime.getTime()
       ) {
         lRT = 1;
         fRT = 1;

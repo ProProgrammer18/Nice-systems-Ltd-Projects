@@ -31,7 +31,7 @@ exports.getAllData = async (req, res) => {
   }
 };
 
-exports.separateData = (file, filename) => {
+exports.separateData = (file) => {
   try {
     let listOfRows = [];
     file.split("\n").forEach((element) => {
@@ -164,6 +164,49 @@ exports.saveData = async (req, res, next) => {
   }
 };
 
+exports.getReqPerMin = async (req, res, next) => {
+  try {
+    let data = await dataModel.find({
+      reqTime: {
+        $gte: req.body.startDate,
+        $lte: req.body.endDate,
+      },
+      companyName: req.body.companyName,
+    });
+    req.requiredData = data;
+
+    let reqPerMin = new Map();
+    data.forEach((req) => {
+      let reqTime = new Date(req.reqTime.getTime() - 19800000);
+      reqTime = formatHelper.fomatTime(reqTime);
+      let count = reqPerMin.get(reqTime) || 0;
+      reqPerMin.set(reqTime, count + 1);
+    });
+    req.reqPerMinObj = Object.fromEntries(reqPerMin);
+    next();
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      status: "Failed in fetching data",
+      err: err,
+    });
+  }
+};
+
+exports.tableData = async (req, res, next) => {
+  try {
+    let data = req.requiredData;
+    
+    next();
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      status: "Failed in fetching data",
+      err: err,
+    });
+  }
+};
+
 exports.filterData = async (req, res) => {
   try {
     let data = req.requiredData;
@@ -196,35 +239,6 @@ exports.filterData = async (req, res) => {
       ResponseMobile: ResponseMobile,
       reqPerMin: req.reqPerMinObj,
     });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({
-      status: "Failed in fetching data",
-      err: err,
-    });
-  }
-};
-
-exports.getReqPerMin = async (req, res, next) => {
-  try {
-    let data = await dataModel.find({
-      reqTime: {
-        $gte: req.body.startDate,
-        $lte: req.body.endDate,
-      },
-      companyName: req.body.companyName,
-    });
-    req.requiredData = data;
-
-    let reqPerMin = new Map();
-    data.forEach((req) => {
-      let reqTime = new Date(req.reqTime.getTime() - 19800000);
-      reqTime = formatHelper.fomatTime(reqTime);
-      let count = reqPerMin.get(reqTime) || 0;
-      reqPerMin.set(reqTime, count + 1);
-    });
-    req.reqPerMinObj = Object.fromEntries(reqPerMin);
-    next();
   } catch (err) {
     console.log(err);
     res.status(500).json({

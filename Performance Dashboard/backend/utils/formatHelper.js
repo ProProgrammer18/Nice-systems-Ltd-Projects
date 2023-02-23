@@ -1,4 +1,4 @@
-export const fomatTime = (reqTime) => {
+exports.fomatTime = (reqTime) => {
   let date = new Date(reqTime);
   let hours = date.getHours();
   let minutes = date.getMinutes();
@@ -11,7 +11,7 @@ export const fomatTime = (reqTime) => {
   return hours + ":" + minutes;
 };
 
-export const fomatTimeHrMin = (reqTime) => {
+exports.fomatTimeHrMin = (reqTime) => {
   let date = new Date(reqTime);
   let hours = date.getHours();
   let minutes = date.getMinutes();

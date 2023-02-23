@@ -24,6 +24,7 @@ router.get("/allData", dataController.getAllData);
 router.post(
   "/filterData",
   dataController.getReqPerMin,
+  dataController.tableData,
   dataController.filterData
 );
 
