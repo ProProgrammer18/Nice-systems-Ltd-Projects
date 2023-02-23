@@ -33,6 +33,10 @@ const dataSchema = new mongoose.Schema({
     type: String,
     required: [true, "Filename required"],
   },
+  companyName: {
+    type: String,
+    required: [true, "Company Name required"],
+  },
 });
 
 const dataModel = mongoose.model("dataModel", dataSchema, "Request_Logs_Model");

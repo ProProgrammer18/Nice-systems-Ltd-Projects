@@ -1,5 +1,6 @@
 const fs = require("fs");
 const fileModel = require("../database/fileSchema");
+const formatHelper = require("../utils/formatHelper");
 
 exports.checkPrevFiles = async (req, res, next) => {
   try {
@@ -14,13 +15,12 @@ exports.checkPrevFiles = async (req, res, next) => {
       .split("-")
       .join("");
     const timespan =
-      firstReqTime.getHours() +
-      firstReqTime.getMinutes() +
+      formatHelper.fomatTimeHrMin(firstReqTime) +
       "-" +
-      lastReqTime.getHours() +
-      lastReqTime.getMinutes();
+      formatHelper.fomatTimeHrMin(lastReqTime);
 
-    const fileId = "BOA_" + currentDate + "-" + timespan + ".log"; //BOA_20230101-1000-1030.log
+    const fileId =
+      req.body.companyName + "_" + currentDate + "-" + timespan + ".log"; //BOA_20230101-1000-1030.log
     req.fileId = fileId;
     req.prevFileFound = 0;
 
@@ -40,7 +40,8 @@ exports.checkPrevFiles = async (req, res, next) => {
       req.prevFileFound = 1;
       next();
     } else {
-      const file = { firstReqTime, lastReqTime, fileId };
+      const companyName = req.body.companyName;
+      const file = { firstReqTime, lastReqTime, fileId, companyName };
       fileModel.create(file);
       console.log("File stored !!");
       next();

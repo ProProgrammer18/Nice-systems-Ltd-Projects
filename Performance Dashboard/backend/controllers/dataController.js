@@ -1,4 +1,5 @@
 const fs = require("fs");
+const formatHelper = require("../utils/formatHelper");
 const dataModel = require("../database/dataSchema");
 
 const upload = fs.readFileSync("public/html/upload.html", "utf-8");
@@ -47,7 +48,6 @@ exports.separateData = (file, filename) => {
         resTime: this.convertToDate(row[4].trim()),
         totProTime: totProTime,
         status: parseInt(row[6].trim()),
-        // filename: filename.trim(),
       };
       listOfRows.push(data);
     });
@@ -69,10 +69,8 @@ exports.convertToDate = (givenDate) => {
   let ss = 0;
   let ms = 0;
 
-  // ! SOME PROBLEM WITH THE TIME (Running 5 hrs 30 mins behind for some reason)
-
   let date = new Date(YY, MM, DD, hh, mm, ss, ms);
-  // const date = new Date(new Date(givenDate).getTime() + 19800000);
+
   return date;
 };
 
@@ -117,7 +115,9 @@ exports.saveData = async (req, res, next) => {
         message: "File with similar data already exists",
       });
     } else {
-      let dbData = await dataModel.find();
+      let dbData = await dataModel.find({
+        companyName: req.body.companyName,
+      });
 
       let alreadyPresentData = [];
 
@@ -142,6 +142,7 @@ exports.saveData = async (req, res, next) => {
           ) == -1
         ) {
           ele.fileId = req.fileId.trim();
+          ele.companyName = req.body.companyName;
           dataToBeUploaded.push(ele);
         }
       });
@@ -204,19 +205,6 @@ exports.filterData = async (req, res) => {
   }
 };
 
-const fomatTime = (reqTime) => {
-  let date = new Date(reqTime);
-  let hours = date.getHours();
-  let minutes = date.getMinutes();
-  if(hours < 10){
-    hours = '0'+hours;
-  }
-  if(minutes < 10){
-    minutes = '0'+minutes;
-  }
-  return hours+':'+minutes;
-}
-
 exports.getReqPerMin = async (req, res, next) => {
   try {
     let data = await dataModel.find({
@@ -224,16 +212,14 @@ exports.getReqPerMin = async (req, res, next) => {
         $gte: req.body.startDate,
         $lte: req.body.endDate,
       },
+      companyName: req.body.companyName,
     });
     req.requiredData = data;
 
     let reqPerMin = new Map();
     data.forEach((req) => {
-      // let reqTime = req.reqTime.toString();
       let reqTime = new Date(req.reqTime.getTime() - 19800000);
-      // let timeLen = reqTime.split(" GMT")[0].length;
-      // reqTime = reqTime.split(" GMT")[0].slice(0, timeLen - 3);
-      reqTime = fomatTime(reqTime);
+      reqTime = formatHelper.fomatTime(reqTime);
       let count = reqPerMin.get(reqTime) || 0;
       reqPerMin.set(reqTime, count + 1);
     });

@@ -13,6 +13,10 @@ const fileSchema = new mongoose.Schema({
     type: String,
     required: [true, "Filename required"],
   },
+  companyName: {
+    type: String,
+    required: [true, "Company Name required"],
+  },
 });
 
 const fileModel = mongoose.model(
