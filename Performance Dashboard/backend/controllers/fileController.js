@@ -17,9 +17,9 @@ exports.checkPrevFiles = async (req, res, next) => {
       .split("-")
       .join("");
     const timespan =
-      formatHelper.fomatTimeHrMin(firstReqTime) +
+      formatHelper.fomatTimeHrMin(firstReqTime - 19800000) +
       "-" +
-      formatHelper.fomatTimeHrMin(lastReqTime);
+      formatHelper.fomatTimeHrMin(lastReqTime - 19800000);
 
     const fileId =
       req.body.companyName + "_" + currentDate + "-" + timespan + ".log"; //BOA_20230101-1000-1030.log

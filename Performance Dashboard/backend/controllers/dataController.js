@@ -196,7 +196,43 @@ exports.getReqPerMin = async (req, res, next) => {
 exports.tableData = async (req, res, next) => {
   try {
     let data = req.requiredData;
-    
+    let allTableData = new Map();
+
+    data.forEach((ele) => {
+      if (allTableData.has(ele.reqURL)) {
+        allTableData.get(ele.reqURL)[0]++;
+        allTableData.get(ele.reqURL)[1] =
+          allTableData.get(ele.reqURL)[1] + ele.totProTime;
+      } else {
+        let lst = [1, ele.totProTime, 0, 0];
+        allTableData.set(ele.reqURL, lst);
+      }
+    });
+
+    data = data.sort((a, b) => {
+      if (a.reqTime < b.reqTime) return -1;
+      else if (a.reqTime > b.reqTime) return 1;
+      else return 0;
+    });
+
+    data.forEach((ele) => {
+      allTableData.get(ele.reqURL)[3]++;
+      if (
+        allTableData.get(ele.reqURL)[3] ==
+        Math.ceil(allTableData.get(ele.reqURL)[0] * 0.95)
+      ) {
+        allTableData.get(ele.reqURL)[2] = ele.totProTime;
+      }
+    });
+
+    allTableData.forEach((ele) => {
+      ele[1] = ele[1] / ele[0];
+    });
+
+    // [total request for that api, avg processing time, p95, ignore this value]
+    req.allTableData = allTableData;
+    console.log(allTableData);
+
     next();
   } catch (err) {
     console.log(err);
@@ -238,6 +274,7 @@ exports.filterData = async (req, res) => {
       ResponseWeb: ResponseWeb,
       ResponseMobile: ResponseMobile,
       reqPerMin: req.reqPerMinObj,
+      allTableData: req.allTableData,
     });
   } catch (err) {
     console.log(err);
