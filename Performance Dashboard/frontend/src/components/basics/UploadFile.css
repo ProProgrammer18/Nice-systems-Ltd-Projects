@@ -5,12 +5,64 @@ body{
   /* background: linear-gradient(135deg, rgba(34,193,195,1) 0%,     rgb(38, 3, 94) 100%); */
   /* background: linear-gradient(#ccffff, #ccccff); */
   background-color: #f2f2f2;
+  /* background-color: #bcc2cf; */
   font-family: "work sans";
   height: 100%;
   /* width: 100%; */
   /* min-height: 100vh; */
 }
+header{
+  background-color: #FFFFFF;
+  /* background-color: #0d0f13; */
+  height: 100px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+}
+h2{
+  font-family: 'open sans', sans-serif;
+  font-size: 2rem;
+  font-weight: 600;
+  font-weight: bold;
+  color: #0e1318;
+  padding: 2rem 0;
+  margin: 0;
+  text-align: center;
+}
+/* .heading
+{
+   text-transform: uppercase;
+  background-image: linear-gradient(
+    -225deg,
+    #05030e 0%,
+    #44107a 29%,
+    #d45f11 67%,
+    #042264 100%
+  );
+  background-size: auto auto;
+  background-clip: border-box;
+  background-size: 200% auto;
+  color: #fff;
+  background-clip: text;
+  text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textclip 2s linear infinite;
+  display: inline-block;
+  font-size: 2rem;
+  padding: 2rem 0;
+  margin: 0;
+  text-align: center;
+}
 
+@keyframes textclip {
+  to {
+    background-position: 200% center;
+  }
+} */
 
 
 html{
@@ -19,14 +71,47 @@ html{
 } 
 
 #loginform{
+  display:none;
   max-width: 500px;
   min-width: 300px;
   max-height: 700px;
   width: 30%;
-  height: 60%;
+  /* height: 60%; */
   margin: 100px auto;
   background-color: #FFFFFF;
+  /* background-color: #767e92; */
   border-radius: 25px;
+  position: fixed;
+  top: 5%;
+  left: 5%;
+}
+
+#dateform{
+  display:none;
+  max-width: 500px;
+  min-width: 300px;
+  max-height: 700px;
+  width: 30%;
+  /* height: 60%; */
+  margin: 100px auto;
+  background-color: #FFFFFF;
+  /* background-color: #767e92; */
+  border-radius: 25px;
+  position:fixed;
+  top: 5%;
+  right: 5%;
+}
+
+#dateform .row input{
+  width: 70%;
+  box-sizing: border-box;
+  border: none;
+  font-size: 1.3rem;
+  padding-left: 1.5rem;
+  padding-bottom: 0.5rem;
+  box-shadow: inset 0px -3px 0px 0px rgba(187,187,187,0.2);
+  transition: box-shadow 0.2s ease-in;
+  /* background-color: rgba(38,3,94); */
 }
 
 #headerTitle{
@@ -59,7 +144,8 @@ html{
 input::file-selector-button {
   /* background-color: #DC3545; */
   /* background-color: #118baa; */
-  background-color: #3498DB;
+  /* background-color: #3498DB; */
+  background-color: rgba(38,3,94);
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -71,7 +157,8 @@ input::file-selector-button {
 }
 
 .row .dropdown {
-  background-color: #3498DB;
+  /* background-color: #3498DB; */
+  background-color: rgba(38,3,94) ;
   color: white;
   padding: 16px;
   font-size: 16px;
@@ -81,7 +168,8 @@ input::file-selector-button {
 }
 
 .row .dropdown:hover, .dropdown:focus {
-  background-color: #2980B9;
+  /* background-color: #2980B9; */
+  background-color: rgba(38,3,94);
 }
 
 .row .dropdown {
@@ -132,13 +220,14 @@ input::file-selector-button {
 
 .row button{
   border-radius: 25px;
-  width: 80%;
+  width: 50%;
   height: 40px;
   font-size: 1.3rem;
   color: white;
   font-weight: 700;
   /* background: rgb(34,193,195); */
-  background: linear-gradient(90deg, rgba(34,193,195,1) 0%,     rgba(38,3,94) 100%);
+  /* background: linear-gradient(90deg, rgba(34,193,195,1) 0%,     rgba(38,3,94) 100%); */
+  background: rgba(38,3,94) ;
   border: 0px;
   cursor: pointer;
   transition: opacity 0.25s ease-out;
@@ -168,5 +257,158 @@ input::file-selector-button {
    padding-top: 2rem;
    margin-top: 1.5rem;
 } */
+
+/* .button_submit{
+  position:fixed;
+  top: 5%;
+  left:5%;
+
+} */
+
+/* .button_graph{
+  position:fixed;
+  top: 5%;
+  right:5%;
+
+} */
+
+
+/* CSS */
+.button_submit {
+  all: unset;
+  width: 70px;
+  height: 30px;
+  font-size: 16px;
+  background: transparent;
+  border: none;
+  /* position: relative; */
+  color: #f0f0f0;
+  cursor: pointer;
+  z-index: 1;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  position:fixed;
+  top: 5%;
+  left:5%;
+}
+
+.button_submit::after,
+.button_submit::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: -99999;
+  transition: all .4s;
+}
+
+.button_submit::before {
+  transform: translate(0%, 0%);
+  width: 100%;
+  height: 100%;
+  background: #28282d;
+  border-radius: 10px;
+}
+
+.button_submit::after {
+  transform: translate(10px, 10px);
+  width: 35px;
+  height: 35px;
+  background: #ffffff15;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border-radius: 50px;
+}
+
+.button_submit:hover::before {
+  transform: translate(5%, 20%);
+  width: 110%;
+  height: 110%;
+}
+
+.button_submit:hover::after {
+  border-radius: 10px;
+  transform: translate(0, 0);
+  width: 100%;
+  height: 100%;
+}
+
+
+/* CSS */
+.button_graph {
+  all: unset;
+  width: 70px;
+  height: 30px;
+  font-size: 16px;
+  background: transparent;
+  border: none;
+  /* position: relative; */
+  color: #f0f0f0;
+  cursor: pointer;
+  z-index: 1;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  position:fixed;
+  top: 5%;
+  right:5%;
+}
+
+.button_graph::after,
+.button_graph::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: -99999;
+  transition: all .4s;
+}
+
+.button_graph::before {
+  transform: translate(0%, 0%);
+  width: 100%;
+  height: 100%;
+  background: #28282d;
+  border-radius: 10px;
+}
+
+.button_graph::after {
+  transform: translate(10px, 10px);
+  width: 35px;
+  height: 35px;
+  background: #ffffff15;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border-radius: 50px;
+}
+
+.button_graph:hover::before {
+  transform: translate(5%, 20%);
+  width: 110%;
+  height: 110%;
+}
+
+.button_graph:hover::after {
+  border-radius: 10px;
+  transform: translate(0, 0);
+  width: 100%;
+  height: 100%;
+}
+
+.button_graph:active::after {
+  transition: 0s;
+  transform: translate(0, 5%);
+}
 
 

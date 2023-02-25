@@ -1,26 +1,56 @@
 // import logo from './logo.svg';
 // import './App.css';
 import React from "react";
+import {useState} from 'react'
 // import Graph from "./components/basics/Graph";
-// import Stackbar from "./components/basics/Stackbar";
-// import ReactDOM from "react-dom";
-// import UploadFile from './components/basics/UploadFile';
-import Router from './routes';
-import { BrowserRouter} from 'react-router-dom';
+import Stackbar from "./components/basics/Stackbar";
+import UploadFile from './components/basics/UploadFile';
+import Date from './components/basics/date';
+// import Router from './routes';
+// import { BrowserRouter} from 'react-router-dom';
 
 
 function App() {
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
+  const [data, setData] = useState("");
+  const [companyName, setCompanyName] = useState();
+
+  const submit = () => {
+    if (document.getElementById("loginform").style.display === "") {
+      document.getElementById("dateform").style.display = "";
+      document.getElementById("loginform").style.display = "block";
+    }
+    else
+      document.getElementById("loginform").style.display = "";
+  };
+
+  const show = () => {
+    if (document.getElementById("dateform").style.display === "") {
+      document.getElementById("loginform").style.display = "";
+      document.getElementById("dateform").style.display = "block";
+    }
+    else
+      document.getElementById("dateform").style.display = "";
+  };
   return (
     <>
-    <BrowserRouter>
-    {/* <h1>Hello demo</h1> */}
-      {/* <Graph /> */}
-      {/* <UploadFile /> */}
-      {/* < Stackbar /> */}
-      <Router />
-     
-    </BrowserRouter>
-      
+      <UploadFile />
+      <Date setFinalStart={setStartDate} setFinalEnd={setEndDate} setData={setData} setFinalCompanyName={setCompanyName}/>
+      <header>
+        <h2 className="heading">Performance Dashboard</h2>
+        <button className="button_submit" onClick={submit}>Upload File</button>
+        <button className="button_graph" onClick={show}>Show Graph</button>
+      </header>
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <Stackbar startDate={startDate} endDate={endDate} graphdata={data} companyName={companyName}/>
     </>
   );
 }

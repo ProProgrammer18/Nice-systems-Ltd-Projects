@@ -1,29 +1,27 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {useState} from 'react'
 import axios from 'axios'
-import {  useNavigate} from 'react-router-dom'
+// import {  useNavigate} from 'react-router-dom'
 
-const Date = () => {
-const [startDate, setStartDate] = useState("");
-const [endDate, setEndDate] = useState("");
-const [startTime, setStartTime] = useState("");
-const [endTime, setEndTime] = useState("");
-const navigate = useNavigate();
-
+const Date = ({setFinalStart, setFinalEnd, setData, setFinalCompanyName}) => {
+  const [companyName, setCompanyName] = useState("Nice");
+  const [startDate, setStartDate] = useState("2023-01-01");
+  const [endDate, setEndDate] = useState("2023-01-01");
+  const [startTime, setStartTime] = useState("10:00");
+  const [endTime, setEndTime] = useState("12:00");
 const SubmitButton = async() => {
     try {
-      if(startDate && endDate && startTime && endTime){
+      if(startDate && endDate && startTime && endTime && companyName){
         const Graphdata = {
           startDate : startDate+"T"+startTime+":00.000+00:00",
-          endDate : endDate+"T"+endTime+":00.000+00:00"
+          endDate : endDate+"T"+endTime+":00.000+00:00",
+          companyName: companyName
           }
-          setStartDate("");
-          setEndDate("");
           const res = await axios.post('http://localhost:5000/filterData', Graphdata);
-          console.log(res.data)
-          if (res.status === 200) {
-            navigate('/Stackbar', { state: { data: res.data, startDate: Graphdata.startDate, endDate: Graphdata.endDate } });
-          }
+          setData(res.data);
+          setFinalStart(Graphdata.startDate);
+          setFinalEnd(Graphdata.endDate);
+          setFinalCompanyName(Graphdata.companyName);
       }
       else{
         alert("Please enter all the fields");
@@ -33,24 +31,33 @@ const SubmitButton = async() => {
       console.log(error);
     }
   }
+  useEffect(() => {
+    SubmitButton();
+  }, [])
   return (
    <>
-        <div id="loginform">
-          <h2 id="headerTitle">Enter Date and Time</h2>
+        <div id="dateform">
+          {/* <h2 id="headerTitle">Enter Date and Time</h2> */}
           <div>
             <div className="row">
+            <label style={{fontWeight:'bold', color:'black'}}>Enter Company Name</label>
+            <input type="text" placeholder="" value={companyName} onChange={(e)=> setCompanyName(e.target.value)}/>
+            <br/>
               <label style={{fontWeight:'bold', color:'black'}}>Start Date</label>
             <input
                 type="date" value = {startDate} onChange={(e) => setStartDate(e.target.value)}
               />
+              <br/>
               <label style={{fontWeight:'bold', color:'black'}}>Start Time</label>
               <input
                 type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)}
               />
+              <br/>
               <label style={{fontWeight:'bold', color:'black'}}>End Date</label>
                <input
                 type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)}
               />
+              <br/>
               <label style={{fontWeight:'bold', color:'black'}}>End Time</label>
               <input
                 type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)}
