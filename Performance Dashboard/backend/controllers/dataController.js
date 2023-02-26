@@ -230,7 +230,8 @@ exports.tableData = async (req, res, next) => {
     });
 
     // [total request for that api, avg processing time, p95, ignore this value]
-    req.allTableData = allTableData;
+    req.allTableData = Object.fromEntries(allTableData);
+    // req.allTableData = allTableData;
     console.log(allTableData);
 
     next();
