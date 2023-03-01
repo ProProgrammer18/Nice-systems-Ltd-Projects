@@ -48,8 +48,8 @@ function App() {
       <br />
       <br />
       <br />
-      <br />
-      <br />
+      {/* <br /> */}
+      {/* <br /> */}
       <Stackbar startDate={startDate} endDate={endDate} graphdata={data} companyName={companyName}/>
     </>
   );
