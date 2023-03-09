@@ -1,6 +1,6 @@
 const fs = require("fs");
 const fileModel = require("../database/fileSchema");
-const formatHelper = require("../utils/formatHelper");
+const helperFunctions = require("../utils/helperFunctions");
 
 exports.checkPrevFiles = async (req, res, next) => {
   try {
@@ -17,9 +17,9 @@ exports.checkPrevFiles = async (req, res, next) => {
       .split("-")
       .join("");
     const timespan =
-      formatHelper.fomatTimeHrMin(firstReqTime - 19800000) +
+      helperFunctions.fomatTimeHrMin(firstReqTime - 19800000) +
       "-" +
-      formatHelper.fomatTimeHrMin(lastReqTime - 19800000);
+      helperFunctions.fomatTimeHrMin(lastReqTime - 19800000);
 
     const fileId =
       req.body.companyName + "_" + currentDate + "-" + timespan + ".log"; //BOA_20230101-1000-1030.log

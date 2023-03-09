@@ -1,5 +1,5 @@
 const fs = require("fs");
-const formatHelper = require("../utils/formatHelper");
+const helperFunctions = require("../utils/helperFunctions");
 const dataModel = require("../database/dataSchema");
 
 const upload = fs.readFileSync("public/html/upload.html", "utf-8");
@@ -44,8 +44,8 @@ exports.separateData = (file) => {
         reqURL: row[0].trim(),
         endpoint: row[1].trim(),
         type: row[2].trim(),
-        reqTime: this.convertToDate(row[3].trim()),
-        resTime: this.convertToDate(row[4].trim()),
+        reqTime: helperFunctions.convertToDate(row[3].trim()),
+        resTime: helperFunctions.convertToDate(row[4].trim()),
         totProTime: totProTime,
         status: parseInt(row[6].trim()),
       };
@@ -57,37 +57,6 @@ exports.separateData = (file) => {
   }
 };
 
-exports.convertToDate = (givenDate) => {
-  let gd = givenDate.split("/");
-
-  let DD = parseInt(gd[0]);
-  let MM = parseInt(gd[1]) - 1;
-  let YY = parseInt(gd[2].split("-")[0]);
-  let time = gd[2].split("-")[1].split(":");
-  let hh = parseInt(time[0]) + 6;
-  let mm = parseInt(time[1]) - 30;
-  let ss = 0;
-  let ms = 0;
-
-  let date = new Date(YY, MM, DD, hh, mm, ss, ms);
-
-  return date;
-};
-
-exports.findExtremeDates = (req, listOfRows) => {
-  let allDates = [];
-
-  listOfRows.forEach((ele) => {
-    allDates.push(ele.reqTime);
-    allDates.push(ele.resTime);
-  });
-
-  let minDate = new Date(Math.min.apply(null, allDates));
-  let maxDate = new Date(Math.max.apply(null, allDates));
-  req.minDate = minDate;
-  req.maxDate = maxDate;
-};
-
 exports.loadFile = async (req, res, next) => {
   try {
     let file = req.file.buffer.toString();
@@ -95,7 +64,7 @@ exports.loadFile = async (req, res, next) => {
     req.file.filename = filename;
     req.listOfRows = this.separateData(file, req.file.filename);
 
-    this.findExtremeDates(req, req.listOfRows);
+    helperFunctions.findExtremeDates(req, req.listOfRows);
 
     next();
   } catch (err) {
@@ -178,7 +147,7 @@ exports.getReqPerMin = async (req, res, next) => {
     let reqPerMin = new Map();
     data.forEach((req) => {
       let reqTime = new Date(req.reqTime.getTime() - 19800000);
-      reqTime = formatHelper.fomatTime(reqTime);
+      reqTime = helperFunctions.fomatTime(reqTime);
       let count = reqPerMin.get(reqTime) || 0;
       reqPerMin.set(reqTime, count + 1);
     });
@@ -204,6 +173,7 @@ exports.tableData = async (req, res, next) => {
         allTableData.get(ele.reqURL)[1] =
           allTableData.get(ele.reqURL)[1] + ele.totProTime;
       } else {
+        // [total request for that api, avg processing time, p95, ignore this value]
         let lst = [1, ele.totProTime, 0, 0];
         allTableData.set(ele.reqURL, lst);
       }
@@ -226,12 +196,11 @@ exports.tableData = async (req, res, next) => {
     });
 
     allTableData.forEach((ele) => {
-      ele[1] = ele[1] / ele[0];
+      ele[1] = (ele[1] / ele[0]).toFixed(2);
     });
 
     // [total request for that api, avg processing time, p95, ignore this value]
     req.allTableData = Object.fromEntries(allTableData);
-    // req.allTableData = allTableData;
     console.log(allTableData);
 
     next();
