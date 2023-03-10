@@ -35,24 +35,39 @@ exports.separateData = (file) => {
   try {
     let listOfRows = [];
     file.split("\n").forEach((element) => {
-      let row = element.split("|");
-      let totProTime =
-        parseInt(row[5].trim().split(":")[0]) * 60 +
-        parseInt(row[5].trim().split(":")[1]);
+      let reqDetails = element.split(" - ")[1];
+      let reqTimeDetails = element.split(" - ")[0];
+
+      let row = reqDetails.split("|");
+
+      let reqDate = reqTimeDetails.split(" ")[2];
+
+      let reqTime = new Date(reqDate + " " + row[6]);
+      reqTime.setHours(reqTime.getHours() + 5);
+      reqTime.setMinutes(reqTime.getMinutes() + 30);
+
+      let resTime = new Date(reqDate + " " + row[7]);
+      resTime.setHours(resTime.getHours() + 5);
+      resTime.setMinutes(resTime.getMinutes() + 30);
+
+      let endpoint = row[4].split("/");
+      endpoint = endpoint[endpoint.length - 1];
 
       let data = {
-        reqURL: row[0].trim(),
-        endpoint: row[1].trim(),
-        type: row[2].trim(),
-        reqTime: helperFunctions.convertToDate(row[3].trim()),
-        resTime: helperFunctions.convertToDate(row[4].trim()),
-        totProTime: totProTime,
-        status: parseInt(row[6].trim()),
+        reqURL: row[4],
+        endpoint: endpoint,
+        type: row[3],
+        reqTime: reqTime,
+        resTime: resTime,
+        totProTime: parseInt(row[8]),
+        status: parseInt(row[5]),
       };
       listOfRows.push(data);
     });
+    // console.log(listOfRows);
     return listOfRows;
-  } catch {
+  } catch (err) {
+    console.log(err);
     console.log("File not present in required format!!");
   }
 };
@@ -60,9 +75,9 @@ exports.separateData = (file) => {
 exports.loadFile = async (req, res, next) => {
   try {
     let file = req.file.buffer.toString();
-    const filename = `${Date.now()}-${req.file.originalname}`;
-    req.file.filename = filename;
-    req.listOfRows = this.separateData(file, req.file.filename);
+    file = file.replace(/^\n+|\n+$/g, "").replace(/\n{2,}/g, "\n");
+
+    req.listOfRows = this.separateData(file);
 
     helperFunctions.findExtremeDates(req, req.listOfRows);
 
@@ -172,9 +187,28 @@ exports.tableData = async (req, res, next) => {
         allTableData.get(ele.reqURL)[0]++;
         allTableData.get(ele.reqURL)[1] =
           allTableData.get(ele.reqURL)[1] + ele.totProTime;
+
+        if (ele.status >= 200 && ele.status < 300) {
+          allTableData.get(ele.reqURL)[4]++;
+        } else if (ele.status >= 300 && ele.status < 400) {
+          allTableData.get(ele.reqURL)[5]++;
+        } else if (ele.status >= 400 && ele.status < 500) {
+          allTableData.get(ele.reqURL)[6]++;
+        } else if (ele.status >= 500 && ele.status < 600) {
+          allTableData.get(ele.reqURL)[7]++;
+        }
       } else {
-        // [total request for that api, avg processing time, p95, ignore this value]
-        let lst = [1, ele.totProTime, 0, 0];
+        // [total request for that api, avg processing time, p95, ignore this value, 2xx, 3xx, 4xx, 5xx]
+        let lst = [1, ele.totProTime, 0, 0, 0, 0, 0, 0];
+        if (ele.status >= 200 && ele.status < 300) {
+          lst = [1, ele.totProTime, 0, 0, 1, 0, 0, 0];
+        } else if (ele.status >= 300 && ele.status < 400) {
+          lst = [1, ele.totProTime, 0, 0, 0, 1, 0, 0];
+        } else if (ele.status >= 400 && ele.status < 500) {
+          lst = [1, ele.totProTime, 0, 0, 0, 0, 1, 0];
+        } else if (ele.status >= 500 && ele.status < 600) {
+          lst = [1, ele.totProTime, 0, 0, 0, 0, 0, 1];
+        }
         allTableData.set(ele.reqURL, lst);
       }
     });
@@ -213,6 +247,7 @@ exports.tableData = async (req, res, next) => {
   }
 };
 
+// Filters Web and Mobile request count
 exports.filterData = async (req, res) => {
   try {
     let data = req.requiredData;

@@ -26,24 +26,6 @@ exports.fomatTimeHrMin = (reqTime) => {
   return hours + "" + minutes;
 };
 
-/* Converting a string to a date. */
-exports.convertToDate = (givenDate) => {
-  let gd = givenDate.split("/");
-
-  let DD = parseInt(gd[0]);
-  let MM = parseInt(gd[1]) - 1;
-  let YY = parseInt(gd[2].split("-")[0]);
-  let time = gd[2].split("-")[1].split(":");
-  let hh = parseInt(time[0]) + 6;
-  let mm = parseInt(time[1]) - 30;
-  let ss = 0;
-  let ms = 0;
-
-  let date = new Date(YY, MM, DD, hh, mm, ss, ms);
-
-  return date;
-};
-
 /* A function that takes two parameters, `req` and `listOfRows`. It then creates an array called
 `allDates` and then loops through the `listOfRows` array and pushes the `reqTime` and `resTime`
 properties of each element into the `allDates` array. It then creates two variables called `minDate`
