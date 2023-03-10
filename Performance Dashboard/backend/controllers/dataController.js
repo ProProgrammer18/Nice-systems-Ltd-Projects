@@ -257,7 +257,7 @@ exports.filterData = async (req, res) => {
     ResponseWeb = new Map();
     ResponseMobile = new Map();
     for (let i = 0; i < data.length; i++) {
-      if (data[i].type == "Web") {
+      if (data[i].type == "Web" || data[i].type == "Web_Agent") {
         webcnt++;
         if (!ResponseWeb[data[i].status]) {
           ResponseWeb[data[i].status] = 1;
