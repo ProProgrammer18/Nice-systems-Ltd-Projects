@@ -51,6 +51,10 @@ export default function Stackbar({ startDate, endDate, graphdata, companyName })
       Request_Count: graphdata?.allTableData[key3][0],
       Average_Response_Time: graphdata?.allTableData[key3][1],
       P95: graphdata?.allTableData[key3][2],
+      Two_Hundred: graphdata?.allTableData[key3][3],
+      Three_Hundred: graphdata?.allTableData[key3][4],
+      Four_Hundred: graphdata?.allTableData[key3][5],
+      Five_Hundred: graphdata?.allTableData[key3][6],
     })
   }
 
@@ -192,10 +196,14 @@ export default function Stackbar({ startDate, endDate, graphdata, companyName })
             <thead>
               <tr>
                 <th>Sr no</th>
-                <th>API_Name</th>
+                <th>Endpoint</th>
                 <th>Request_Count</th>
-                <th>Average Response Time</th>
+                <th>Avg Response Time</th>
                 <th>p95</th>
+                <th>2xx</th>
+                <th>3xx</th>
+                <th>4xx</th>
+                <th>5xx</th>
               </tr>
             </thead>
             <tbody>
@@ -208,6 +216,10 @@ export default function Stackbar({ startDate, endDate, graphdata, companyName })
                       <td>{item.Request_Count}</td>
                       <td>{item.Average_Response_Time}</td>
                       <td>{item.P95}</td>
+                      <td>{item.Two_Hundred}</td>
+                      <td>{item.Three_Hundred}</td>
+                      <td>{item.Four_Hundred}</td>
+                      <td>{item.Five_Hundred}</td>
                     </tr>
                   )
                 }

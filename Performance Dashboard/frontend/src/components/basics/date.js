@@ -5,10 +5,10 @@ import axios from 'axios'
 
 const Date = ({setFinalStart, setFinalEnd, setData, setFinalCompanyName}) => {
   const [companyName, setCompanyName] = useState("Nice");
-  const [startDate, setStartDate] = useState("2023-01-01");
-  const [endDate, setEndDate] = useState("2023-01-01");
-  const [startTime, setStartTime] = useState("10:00");
-  const [endTime, setEndTime] = useState("12:00");
+  const [startDate, setStartDate] = useState("2023-03-04");
+  const [endDate, setEndDate] = useState("2023-03-05");
+  const [startTime, setStartTime] = useState("22:57");
+  const [endTime, setEndTime] = useState("20:02");
 const SubmitButton = async() => {
     try {
       if(startDate && endDate && startTime && endTime && companyName){
@@ -33,7 +33,7 @@ const SubmitButton = async() => {
   }
   useEffect(() => {
     SubmitButton();
-  }, [])
+  },[])
   return (
    <>
         <div id="dateform">
