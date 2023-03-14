@@ -51,10 +51,10 @@ export default function Stackbar({ startDate, endDate, graphdata, companyName })
       Request_Count: graphdata?.allTableData[key3][0],
       Average_Response_Time: graphdata?.allTableData[key3][1],
       P95: graphdata?.allTableData[key3][2],
-      Two_Hundred: graphdata?.allTableData[key3][3],
-      Three_Hundred: graphdata?.allTableData[key3][4],
-      Four_Hundred: graphdata?.allTableData[key3][5],
-      Five_Hundred: graphdata?.allTableData[key3][6],
+      Two_Hundred: graphdata?.allTableData[key3][4],
+      Three_Hundred: graphdata?.allTableData[key3][5],
+      Four_Hundred: graphdata?.allTableData[key3][6],
+      Five_Hundred: graphdata?.allTableData[key3][7],
     })
   }
 
@@ -67,7 +67,7 @@ export default function Stackbar({ startDate, endDate, graphdata, companyName })
       },
       title: {
         display: true,
-        text: 'Total Web and Mobile Requests for Date Range ' + startingDate + ' on ' + startingTime + ' to ' + endingDate + ' on ' + endingTime,
+        text: 'Total Web and Mobile Requests for Date Range ' + startingDate + '-' + startingTime + ' to ' + endingDate + '-' + endingTime,
         font: {
           size: 20,
           weight: 'bold',
@@ -123,7 +123,7 @@ export default function Stackbar({ startDate, endDate, graphdata, companyName })
     plugins: {
       title: {
         display: true,
-        text: 'Total Requests per min for Date range ' + startingDate + ' on ' + startingTime + ' to ' + endingDate + ' on ' + endingTime,
+        text: 'Total Requests per min for Date range ' + startingDate + '-' + startingTime + ' to ' + endingDate + '-' + endingTime,
         font: {
           size: 20,
           weight: 'bold',
