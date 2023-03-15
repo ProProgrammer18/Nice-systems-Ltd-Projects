@@ -58,7 +58,50 @@ export default function Stackbar({ startDate, endDate, graphdata, companyName })
     })
   }
 
+  const useSortableData = (items, config = null) => {
+    const [sortConfig, setSortConfig] = React.useState(config);
+
+    const sortedItems = React.useMemo(() => {
+      let sortableItems = [...items];
+      if (sortConfig !== null) {
+        sortableItems.sort((a, b) => {
+          if (a[sortConfig.key] < b[sortConfig.key]) {
+            return sortConfig.direction === 'ascending' ? -1 : 1;
+          }
+          if (a[sortConfig.key] > b[sortConfig.key]) {
+            return sortConfig.direction === 'ascending' ? 1 : -1;
+          }
+          return 0;
+        });
+      }
+      return sortableItems;
+    }, [items, sortConfig]);
+
+    const requestSort = (key) => {
+      let direction = 'ascending';
+      if (
+        sortConfig &&
+        sortConfig.key === key &&
+        sortConfig.direction === 'ascending'
+      ) {
+        direction = 'descending';
+      }
+      setSortConfig({ key, direction });
+    };
+
+    return { items: sortedItems, requestSort, sortConfig };
+  };
+
+
   console.log(graphdata);
+
+  const { items, requestSort, sortConfig } = useSortableData(tableData);
+  const getClassNamesFor = (name) => {
+    if (!sortConfig) {
+      return;
+    }
+    return sortConfig.key === name ? sortConfig.direction : undefined;
+  };
 
   const options = {
     plugins: {
@@ -101,7 +144,22 @@ export default function Stackbar({ startDate, endDate, graphdata, companyName })
   const labels = ['Web', 'Mobile'];
   const dataset = [];
 
-  for (var key in graphdata?.ResponseWeb) {
+  // for (var key4 in graphdata?.ResponseMobile ) {
+  //   dataset.push({
+  //     label: key4,
+  //     data: [graphdata?.ResponseMobile[key4]],
+  //     borderColor: colorManager(true, key4),
+  //     backgroundColor: colorManager(false, key4),
+  //     ChartDataLabels: {
+  //       color: 'white',
+  //     },
+  //     barThickness: 80,
+  //   })
+  // }
+
+  
+
+  for (var key in graphdata?.ResponseWeb ) {
     dataset.push({
       label: key,
       data: [graphdata?.ResponseWeb[key], graphdata?.ResponseMobile[key]],
@@ -195,7 +253,7 @@ export default function Stackbar({ startDate, endDate, graphdata, companyName })
           <table className="fl-table">
             <thead>
               <tr>
-                <th>Sr no</th>
+                {/* <th>Sr no</th>
                 <th>Endpoint</th>
                 <th>Request_Count</th>
                 <th>Avg Response Time</th>
@@ -203,14 +261,41 @@ export default function Stackbar({ startDate, endDate, graphdata, companyName })
                 <th>2xx</th>
                 <th>3xx</th>
                 <th>4xx</th>
-                <th>5xx</th>
+                <th>5xx</th> */}
+                <th>
+                  <button className={getClassNamesFor('Sr no')}>Sr no</button>
+                </th>
+                <th>
+                  <button className={getClassNamesFor('API_Name')} onClick={() => requestSort('API_Name')}>Endpoint</button>
+                </th>
+                <th>
+                  <button className={getClassNamesFor('Request_Count')} onClick={() => requestSort('Request_Count')}>Request_Count</button>
+                </th>
+                <th>
+                  <button className={getClassNamesFor('Average_Response_Time')} onClick={() => requestSort('Average_Response_Time')}>Avg Response Time</button>
+                </th>
+                <th>
+                  <button className={getClassNamesFor('P95')} onClick={() => requestSort('P95')}>p95</button>
+                </th>
+                <th>
+                  <button className={getClassNamesFor('Two_Hundred')} onClick={() => requestSort('Two_Hundred')}>2xx</button>
+                </th>
+                <th>
+                  <button className={getClassNamesFor('Three_Hundred')} onClick={() => requestSort('Three_Hundred')}>3xx</button>
+                </th>
+                <th>
+                  <button className={getClassNamesFor('Four_Hundred')} onClick={() => requestSort('Four_Hundred')}>4xx</button>
+                </th>
+                <th>
+                  <button className={getClassNamesFor('Five_Hundred')} onClick={() => requestSort('Five_Hundred')}>5xx</button>
+                </th>
               </tr>
             </thead>
             <tbody>
               {
-                tableData.map((item, index) => {
+                items.map((item, index) => {
                   return (
-                    <tr key = {index}>
+                    <tr key={index}>
                       <td>{index + 1}</td>
                       <td>{item.API_Name}</td>
                       <td>{item.Request_Count}</td>
@@ -224,13 +309,13 @@ export default function Stackbar({ startDate, endDate, graphdata, companyName })
                   )
                 }
                 )
-              }       
-              </tbody>
-              </table>
-            </div>
+              }
+            </tbody>
+          </table>
         </div>
-        <br />
-        <br />
       </div>
-      );
+      <br />
+      <br />
+    </div>
+  );
 }
