@@ -49,7 +49,7 @@ export default function Stackbar({ startDate, endDate, graphdata, companyName })
     tableData.push({
       API_Name: key3,
       Request_Count: graphdata?.allTableData[key3][0],
-      Average_Response_Time: graphdata?.allTableData[key3][1],
+      Average_Response_Time: parseFloat(graphdata?.allTableData[key3][1]),
       P95: graphdata?.allTableData[key3][2],
       Two_Hundred: graphdata?.allTableData[key3][4],
       Three_Hundred: graphdata?.allTableData[key3][5],
@@ -144,22 +144,16 @@ export default function Stackbar({ startDate, endDate, graphdata, companyName })
   const labels = ['Web', 'Mobile'];
   const dataset = [];
 
-  // for (var key4 in graphdata?.ResponseMobile ) {
-  //   dataset.push({
-  //     label: key4,
-  //     data: [graphdata?.ResponseMobile[key4]],
-  //     borderColor: colorManager(true, key4),
-  //     backgroundColor: colorManager(false, key4),
-  //     ChartDataLabels: {
-  //       color: 'white',
-  //     },
-  //     barThickness: 80,
-  //   })
-  // }
+  var set = new Set();
+  for (var key4 in graphdata?.ResponseWeb) {
+    set.add(key4);
+  }
+  for (var key5 in graphdata?.ResponseMobile) {
+    set.add(key5);
+  }
 
-  
-
-  for (var key in graphdata?.ResponseWeb ) {
+  for (var i = 0; i < set.size; i++) {
+    var key = Array.from(set)[i];
     dataset.push({
       label: key,
       data: [graphdata?.ResponseWeb[key], graphdata?.ResponseMobile[key]],
