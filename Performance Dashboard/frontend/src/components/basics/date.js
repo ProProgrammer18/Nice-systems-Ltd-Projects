@@ -8,7 +8,7 @@ const Date = ({setFinalStart, setFinalEnd, setData, setFinalCompanyName}) => {
   const [startDate, setStartDate] = useState("2023-03-04");
   const [endDate, setEndDate] = useState("2023-03-05");
   const [startTime, setStartTime] = useState("22:57");
-  const [endTime, setEndTime] = useState("20:02");
+  const [endTime, setEndTime] = useState("20:03");
 const SubmitButton = async() => {
     try {
       if(startDate && endDate && startTime && endTime && companyName){
