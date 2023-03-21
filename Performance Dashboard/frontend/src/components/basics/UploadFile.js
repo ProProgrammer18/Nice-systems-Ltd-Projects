@@ -1,17 +1,15 @@
 import React from "react";
 import { useState } from "react";
 import axios from "axios";
-import "./UploadFile.css";
-// import { useNavigate } from "react-router-dom";
+import '../../assets/UploadFile.css'
 
 const UploadFile = () => {
   const [file, setFile] = useState(""); // storing the uploaded file
-  const [companyName, setCompanyName] = useState("Nice"); 
-  // const navigate = useNavigate();
+  const [companyName, setCompanyName] = useState("Nice");
   const SubmitButton = async () => {
     try {
       if (file && companyName) {
-       
+
         const formData = new FormData();
         formData.append("data", file);
         formData.append("companyName", companyName);
@@ -32,31 +30,25 @@ const UploadFile = () => {
     <>
       <div>
         <div id="loginform">
-          {/* <h2 id="headerTitle">Upload your File</h2> */}
           <div>
             <div className="row" >
-              <label style={{fontWeight:'bold', color:'black'}}>Enter Company Name</label>
-              {/* <select className="dropdown" value={companyName} onChange={(e) => setCompanyName(e.target.value)}>
-                <option value={companyName} onChange={(e) => setCompanyName(e.target.value)}>Select</option >
-                <option value={companyName} onChange={(e) => setCompanyName(e.target.value)}>Customer1</option >
-                <option value={companyName} onChange={(e) => setCompanyName(e.target.value)}>Customer2</option>
-                <option value={companyName} onChange={(e) => setCompanyName(e.target.value)}>Customer3</option>
-                <option value={companyName} onChange={(e) => setCompanyName(e.target.value)}>Customer4</option> 
-              </select > */}
-              <input type="text" placeholder="" value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
+              <label style={{ fontWeight: 'bold', color: 'black' }}>Enter Company Name</label>
+              <input 
+              type="text" 
+              placeholder="" 
+              value={companyName} onChange={(e) => setCompanyName(e.target.value)} 
+              />
               <br />
-              <label style={{fontWeight:'bold', color:'black'}}>Select your File</label>
+              <label style={{ fontWeight: 'bold', color: 'black' }}>Select your File</label>
               <input
                 type="file"
                 placeholder=""
                 onChange={(e) => setFile(e.target.files[0])}
               />
             </div>
-            
             <div id="button" className="row">
               <button onClick={SubmitButton}>Upload</button>
               <br />
-              {/* <button onClick={() => navigate("/date")}>Show Graph</button> */}
             </div>
           </div>
         </div>

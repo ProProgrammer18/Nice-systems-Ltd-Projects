@@ -1,5 +1,6 @@
 import React from 'react';
 import colorManager from './color';
+import fomatTime from './utils/formatTime';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,7 +11,6 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
-// import DataTable from 'react-data-table-component';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 ChartJS.register(
   CategoryScale,
@@ -22,20 +22,6 @@ ChartJS.register(
   Legend
 );
 
-const fomatTime = (time) => {
-  let date = new Date(time);
-  let hours = date.getHours();
-  let minutes = date.getMinutes();
-  if (hours < 10) {
-    hours = '0' + hours;
-  }
-  if (minutes < 10) {
-    minutes = '0' + minutes;
-  }
-  return hours + ':' + minutes;
-}
-
-
 export default function Stackbar({ startDate, endDate, graphdata, companyName }) {
   const date = new Date(new Date(startDate).getTime() - 19800000);
   const date1 = new Date(new Date(endDate).getTime() - 19800000);
@@ -43,65 +29,9 @@ export default function Stackbar({ startDate, endDate, graphdata, companyName })
   const endingDate = date1.getDate() + '/' + (date1.getMonth() + 1) + '/' + date1.getFullYear();
   const startingTime = fomatTime(date);
   const endingTime = fomatTime(date1);
-
-  const tableData = [];
-  for (var key3 in graphdata?.allTableData) {
-    tableData.push({
-      API_Name: key3,
-      Request_Count: graphdata?.allTableData[key3][0],
-      Average_Response_Time: parseFloat(graphdata?.allTableData[key3][1]),
-      P95: graphdata?.allTableData[key3][2],
-      Two_Hundred: graphdata?.allTableData[key3][4],
-      Three_Hundred: graphdata?.allTableData[key3][5],
-      Four_Hundred: graphdata?.allTableData[key3][6],
-      Five_Hundred: graphdata?.allTableData[key3][7],
-    })
-  }
-
-  const useSortableData = (items, config = null) => {
-    const [sortConfig, setSortConfig] = React.useState(config);
-
-    const sortedItems = React.useMemo(() => {
-      let sortableItems = [...items];
-      if (sortConfig !== null) {
-        sortableItems.sort((a, b) => {
-          if (a[sortConfig.key] < b[sortConfig.key]) {
-            return sortConfig.direction === 'ascending' ? -1 : 1;
-          }
-          if (a[sortConfig.key] > b[sortConfig.key]) {
-            return sortConfig.direction === 'ascending' ? 1 : -1;
-          }
-          return 0;
-        });
-      }
-      return sortableItems;
-    }, [items, sortConfig]);
-
-    const requestSort = (key) => {
-      let direction = 'ascending';
-      if (
-        sortConfig &&
-        sortConfig.key === key &&
-        sortConfig.direction === 'ascending'
-      ) {
-        direction = 'descending';
-      }
-      setSortConfig({ key, direction });
-    };
-
-    return { items: sortedItems, requestSort, sortConfig };
-  };
-
-
   console.log(graphdata);
 
-  const { items, requestSort, sortConfig } = useSortableData(tableData);
-  const getClassNamesFor = (name) => {
-    if (!sortConfig) {
-      return;
-    }
-    return sortConfig.key === name ? sortConfig.direction : undefined;
-  };
+  //stacked graph for web and mobile requests
 
   const options = {
     plugins: {
@@ -140,8 +70,8 @@ export default function Stackbar({ startDate, endDate, graphdata, companyName })
       },
     },
   };
-
   const labels = ['Web', 'Mobile'];
+
   const dataset = [];
 
   var set = new Set();
@@ -170,6 +100,8 @@ export default function Stackbar({ startDate, endDate, graphdata, companyName })
     labels,
     datasets: dataset,
   };
+
+  //Bar graph for requests per min
 
   const options1 = {
     plugins: {
@@ -215,6 +147,66 @@ export default function Stackbar({ startDate, endDate, graphdata, companyName })
     ],
   };
 
+  //show table data for each API
+
+  const tableData = [];
+  for (var key3 in graphdata?.allTableData) {
+    tableData.push({
+      API_Name: key3,
+      Request_Count: graphdata?.allTableData[key3][0],
+      Average_Response_Time: parseFloat(graphdata?.allTableData[key3][1]),
+      P95: graphdata?.allTableData[key3][2],
+      Two_Hundred: graphdata?.allTableData[key3][4],
+      Three_Hundred: graphdata?.allTableData[key3][5],
+      Four_Hundred: graphdata?.allTableData[key3][6],
+      Five_Hundred: graphdata?.allTableData[key3][7],
+    })
+  }
+
+  //sortable table data
+
+  const useSortableData = (items, config = null) => {
+    const [sortConfig, setSortConfig] = React.useState(config);
+
+    const sortedItems = React.useMemo(() => {
+      let sortableItems = [...items];
+      if (sortConfig !== null) {
+        sortableItems.sort((a, b) => {
+          if (a[sortConfig.key] < b[sortConfig.key]) {
+            return sortConfig.direction === 'ascending' ? -1 : 1;
+          }
+          if (a[sortConfig.key] > b[sortConfig.key]) {
+            return sortConfig.direction === 'ascending' ? 1 : -1;
+          }
+          return 0;
+        });
+      }
+      return sortableItems;
+    }, [items, sortConfig]);
+
+    const requestSort = (key) => {
+      let direction = 'ascending';
+      if (
+        sortConfig &&
+        sortConfig.key === key &&
+        sortConfig.direction === 'ascending'
+      ) {
+        direction = 'descending';
+      }
+      setSortConfig({ key, direction });
+    };
+
+    return { items: sortedItems, requestSort, sortConfig };
+  };
+  const { items, requestSort, sortConfig } = useSortableData(tableData);
+  const getClassNamesFor = (name) => {
+    if (!sortConfig) {
+      return;
+    }
+    return sortConfig.key === name ? sortConfig.direction : undefined;
+  };
+
+
   return (
     <div>
       <div className="App" style={{ display: 'flex', margin: '5px' }}>
@@ -235,27 +227,16 @@ export default function Stackbar({ startDate, endDate, graphdata, companyName })
             <Bar data={data1} options={options1} />
           </div>
         </div>
-        {/* <hr style={{ width: '100%'}}/> */}
         <br />
         <br />
       </div>
       <hr />
       <div >
         <br />
-        {/* <h2>Responsive Table</h2> */}
         <div className="table-wrapper">
           <table className="fl-table">
             <thead>
               <tr>
-                {/* <th>Sr no</th>
-                <th>Endpoint</th>
-                <th>Request_Count</th>
-                <th>Avg Response Time</th>
-                <th>p95</th>
-                <th>2xx</th>
-                <th>3xx</th>
-                <th>4xx</th>
-                <th>5xx</th> */}
                 <th>
                   <button className={getClassNamesFor('Sr no')}>Sr no</button>
                 </th>

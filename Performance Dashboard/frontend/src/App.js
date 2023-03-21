@@ -1,13 +1,8 @@
-// import logo from './logo.svg';
-// import './App.css';
 import React from "react";
-import {useState} from 'react'
-// import Graph from "./components/basics/Graph";
+import { useState } from 'react'
 import Stackbar from "./components/basics/Stackbar";
 import UploadFile from './components/basics/UploadFile';
 import Date from './components/basics/date';
-// import Router from './routes';
-// import { BrowserRouter} from 'react-router-dom';
 
 
 function App() {
@@ -36,7 +31,7 @@ function App() {
   return (
     <>
       <UploadFile />
-      <Date setFinalStart={setStartDate} setFinalEnd={setEndDate} setData={setData} setFinalCompanyName={setCompanyName}/>
+      <Date setFinalStart={setStartDate} setFinalEnd={setEndDate} setData={setData} setFinalCompanyName={setCompanyName} />
       <header>
         <h2 className="heading">Performance Dashboard</h2>
         <button className="button_submit" onClick={submit}>Upload File</button>
@@ -48,9 +43,7 @@ function App() {
       <br />
       <br />
       <br />
-      {/* <br /> */}
-      {/* <br /> */}
-      <Stackbar startDate={startDate} endDate={endDate} graphdata={data} companyName={companyName}/>
+      <Stackbar startDate={startDate} endDate={endDate} graphdata={data} companyName={companyName} />
     </>
   );
 }
