@@ -3,11 +3,11 @@ import { useState } from 'react'
 import axios from 'axios'
 
 const Date = ({ setFinalStart, setFinalEnd, setData, setFinalCompanyName }) => {
-  const [companyName, setCompanyName] = useState("Nice");
-  const [startDate, setStartDate] = useState("2023-03-04");
-  const [endDate, setEndDate] = useState("2023-03-05");
-  const [startTime, setStartTime] = useState("22:57");
-  const [endTime, setEndTime] = useState("20:03");
+  const [companyName, setCompanyName] = useState(""); //Nice
+  const [startDate, setStartDate] = useState(""); //2023-03-04
+  const [endDate, setEndDate] = useState(""); //2023-03-05
+  const [startTime, setStartTime] = useState(""); //22:57
+  const [endTime, setEndTime] = useState(""); //20;03
 
   const SubmitButton = async () => {
     try {

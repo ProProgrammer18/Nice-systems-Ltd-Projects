@@ -31,6 +31,16 @@ export default function Stackbar({ startDate, endDate, graphdata, companyName })
   const endingTime = fomatTime(date1);
   console.log(graphdata);
 
+  // var text;
+
+//  if(graphdata)
+//   {
+//   text = 'Total Web and Mobile Requests for Date Range ' + startingDate + '-' + startingTime + ' to ' + endingDate + '-' + endingTime;  
+//   }
+//   else
+//   {
+//     text = 'Total Web and Mobile Requests'
+//   }
   //stacked graph for web and mobile requests
 
   const options = {
@@ -40,7 +50,8 @@ export default function Stackbar({ startDate, endDate, graphdata, companyName })
       },
       title: {
         display: true,
-        text: 'Total Web and Mobile Requests for Date Range ' + startingDate + '-' + startingTime + ' to ' + endingDate + '-' + endingTime,
+        text:graphdata ? 'Total Web and Mobile Requests for Date Range ' + startingDate + '-' + startingTime + ' to ' + endingDate + '-' + endingTime : 'Total Web and Mobile Requests',
+        // text: 'Total Web and Mobile Requests for Date Range ' + startingDate + '-' + startingTime + ' to ' + endingDate + '-' + endingTime,
         font: {
           size: 20,
           weight: 'bold',
@@ -107,7 +118,9 @@ export default function Stackbar({ startDate, endDate, graphdata, companyName })
     plugins: {
       title: {
         display: true,
-        text: 'Total Requests per min for Date range ' + startingDate + '-' + startingTime + ' to ' + endingDate + '-' + endingTime,
+        // text: 'Total Requests per min for Date range ' + startingDate + '-' + startingTime + ' to ' + endingDate + '-' + endingTime,
+        //if graphdata is not present then show total requests per min
+        text: graphdata ? 'Total Requests per min for Date range ' + startingDate + '-' + startingTime + ' to ' + endingDate + '-' + endingTime : 'Total Requests per min',
         font: {
           size: 20,
           weight: 'bold',
@@ -220,7 +233,7 @@ export default function Stackbar({ startDate, endDate, graphdata, companyName })
         <br />
         <br />
 
-        <div style={{ display: 'flex', paddingLeft: '200px' }}>
+        <div style={{ display: 'flex', paddingLeft: '400px' }}>
           <div style={{ width: "700px" }}>
             <br />
             <br />
