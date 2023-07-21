@@ -23,9 +23,6 @@ const Date = ({ setFinalStart, setFinalEnd, setData, setFinalCompanyName }) => {
         setFinalEnd(Graphdata.endDate);
         setFinalCompanyName(Graphdata.companyName);
       }
-      else {
-        alert("Please enter all the fields");
-      }
     }
     catch (error) {
       console.log(error);

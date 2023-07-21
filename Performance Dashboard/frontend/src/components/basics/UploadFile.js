@@ -5,7 +5,7 @@ import '../../assets/UploadFile.css'
 
 const UploadFile = () => {
   const [file, setFile] = useState(""); // storing the uploaded file
-  const [companyName, setCompanyName] = useState("Nice");
+  const [companyName, setCompanyName] = useState(""); //Nice
   const SubmitButton = async () => {
     try {
       if (file && companyName) {
