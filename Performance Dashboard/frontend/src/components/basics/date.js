@@ -1,6 +1,20 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useState } from 'react'
 import axios from 'axios'
+
+function useOutsideAlerter(ref) {
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        document.getElementById("dateform").style.display = "";
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [ref]);
+}
 
 const Date = ({ setFinalStart, setFinalEnd, setData, setFinalCompanyName }) => {
   const [companyName, setCompanyName] = useState(""); //Nice
@@ -8,6 +22,9 @@ const Date = ({ setFinalStart, setFinalEnd, setData, setFinalCompanyName }) => {
   const [endDate, setEndDate] = useState(""); //2023-03-05
   const [startTime, setStartTime] = useState(""); //22:57
   const [endTime, setEndTime] = useState(""); //20;03
+
+  const wrapperRef = useRef(null);
+  useOutsideAlerter(wrapperRef);
 
   const SubmitButton = async () => {
     try {
@@ -22,6 +39,10 @@ const Date = ({ setFinalStart, setFinalEnd, setData, setFinalCompanyName }) => {
         setFinalStart(Graphdata.startDate);
         setFinalEnd(Graphdata.endDate);
         setFinalCompanyName(Graphdata.companyName);
+        if(res.status === 200){
+          // alert("Graph Generated Successfully");
+          document.getElementById("dateform").style.display = "";
+        }
       }
     }
     catch (error) {
@@ -35,7 +56,7 @@ const Date = ({ setFinalStart, setFinalEnd, setData, setFinalCompanyName }) => {
 
   return (
     <>
-      <div id="dateform">
+      <div id="dateform" ref={wrapperRef}>
         <div>
           <div className="row">
             <label style={{ fontWeight: 'bold', color: 'black' }}>Enter Company Name</label>

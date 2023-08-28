@@ -341,7 +341,7 @@ hr {
 }
 
 .button_submit {
-  appearance: none;
+  /* appearance: none; */
   background-color: #000000;
   border: 2px solid #1A1A1A;
   border-radius: 10px;

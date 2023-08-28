@@ -1,15 +1,32 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import '../../assets/UploadFile.css'
+
+
+function useOutsideAlerter(ref) {
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        document.getElementById("loginform").style.display = "";
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [ref]);
+}
+
 
 const UploadFile = () => {
   const [file, setFile] = useState(""); // storing the uploaded file
   const [companyName, setCompanyName] = useState(""); //Nice
+  const wrapperRef = useRef(null);
+  useOutsideAlerter(wrapperRef);
   const SubmitButton = async () => {
     try {
       if (file && companyName) {
-
         const formData = new FormData();
         formData.append("data", file);
         formData.append("companyName", companyName);
@@ -20,6 +37,9 @@ const UploadFile = () => {
         } else if (res.status === 200) {
           alert("File already exists");
         }
+        if (res.status == 200 || res.status == 201) {
+            document.getElementById("loginform").style.display = "";
+        }
       }
     } catch (error) {
       console.log(error);
@@ -29,7 +49,7 @@ const UploadFile = () => {
   return (
     <>
       <div>
-        <div id="loginform">
+        <div id="loginform" ref={wrapperRef}>
           <div>
             <div className="row" >
               <label style={{ fontWeight: 'bold', color: 'black' }}>Enter Company Name</label>
