@@ -4,6 +4,7 @@ const helperFunctions = require("../utils/helperFunctions");
 
 exports.checkPrevFiles = async (req, res, next) => {
   try {
+    console.log("Checking if same file exists !!");
     const firstReqTime = req.minDate;
     const lastReqTime = req.maxDate;
 
@@ -45,7 +46,7 @@ exports.checkPrevFiles = async (req, res, next) => {
       const companyName = req.body.companyName;
       const file = { firstReqTime, lastReqTime, fileId, companyName };
       fileModel.create(file);
-      console.log("File stored !!");
+      console.log("File data stored !!");
       next();
     }
   } catch (err) {

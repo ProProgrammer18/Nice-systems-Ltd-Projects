@@ -35,34 +35,36 @@ exports.separateData = (file) => {
   try {
     let listOfRows = [];
     file.split("\n").forEach((element) => {
-      let reqDetails = element.split(" - ")[1];
-      let reqTimeDetails = element.split(" - ")[0];
+      try {
+        let reqDetails = element.split(" - ")[1];
+        let reqTimeDetails = element.split(" - ")[0];
 
-      let row = reqDetails.split("|");
+        let row = reqDetails.split("|");
 
-      let reqDate = reqTimeDetails.split(" ")[2];
+        let reqDate = reqTimeDetails.split(" ")[2];
 
-      let reqTime = new Date(reqDate + " " + row[6]);
-      reqTime.setHours(reqTime.getHours() + 5);
-      reqTime.setMinutes(reqTime.getMinutes() + 30);
+        let reqTime = new Date(reqDate + " " + row[6]);
+        reqTime.setHours(reqTime.getHours() + 5);
+        reqTime.setMinutes(reqTime.getMinutes() + 30);
 
-      let resTime = new Date(reqDate + " " + row[7]);
-      resTime.setHours(resTime.getHours() + 5);
-      resTime.setMinutes(resTime.getMinutes() + 30);
+        let resTime = new Date(reqDate + " " + row[7]);
+        resTime.setHours(resTime.getHours() + 5);
+        resTime.setMinutes(resTime.getMinutes() + 30);
 
-      let endpoint = row[4].split("/");
-      endpoint = endpoint[endpoint.length - 1];
+        let endpoint = row[4].split("/");
+        endpoint = endpoint[endpoint.length - 1];
 
-      let data = {
-        reqURL: row[4],
-        endpoint: endpoint,
-        type: row[3],
-        reqTime: reqTime,
-        resTime: resTime,
-        totProTime: parseInt(row[8]),
-        status: parseInt(row[5]),
-      };
-      listOfRows.push(data);
+        let data = {
+          reqURL: row[4],
+          endpoint: endpoint,
+          type: row[3],
+          reqTime: reqTime,
+          resTime: resTime,
+          totProTime: parseInt(row[8]),
+          status: parseInt(row[5]),
+        };
+        listOfRows.push(data);
+      } catch (err) {}
     });
     // console.log(listOfRows);
     return listOfRows;
@@ -74,6 +76,7 @@ exports.separateData = (file) => {
 
 exports.loadFile = async (req, res, next) => {
   try {
+    console.log("Parsing file will take some time!!");
     let file = req.file.buffer.toString();
     file = file.replace(/^\n+|\n+$/g, "").replace(/\n{2,}/g, "\n");
 
@@ -94,46 +97,34 @@ exports.loadFile = async (req, res, next) => {
 exports.saveData = async (req, res, next) => {
   try {
     if (req.prevFileFound) {
-      console.log("File already found !!");
+      console.log("Same File found !!");
       res.status(200).json({
         message: "File with similar data already exists",
       });
     } else {
-      let dbData = await dataModel.find({
-        companyName: req.body.companyName,
-      });
-
-      let alreadyPresentData = [];
-
-      dbData.forEach((ele) => {
-        alreadyPresentData.push({
-          reqURL: ele.reqURL,
-          endpoint: ele.endpoint,
-          type: ele.type,
-          reqTime: ele.reqTime,
-          resTime: ele.resTime,
-          totProTime: ele.totProTime,
-          status: ele.status,
-        });
-      });
-
-      let dataToBeUploaded = [];
-
       req.listOfRows.forEach(async (ele) => {
-        if (
-          alreadyPresentData.findIndex(
-            (item) => JSON.stringify(item) === JSON.stringify(ele)
-          ) == -1
-        ) {
-          ele.fileId = req.fileId.trim();
-          ele.companyName = req.body.companyName;
-          dataToBeUploaded.push(ele);
-        }
+        ele.reqURL = ele.reqURL ? ele.reqURL : "/";
+        ele.endpoint = ele.endpoint ? ele.endpoint : "/";
+        ele.type = ele.type ? ele.type : "/";
+        ele.reqTime = ele.reqTime ? ele.reqTime : new Date();
+        ele.resTime = ele.resTime ? ele.resTime : new Date();
+        ele.totProTime = ele.totProTime ? ele.totProTime : 0;
+        ele.status = ele.status ? ele.status : 0;
+
+        ele.fileId = req.fileId.trim();
+        ele.companyName = req.body.companyName;
       });
 
-      await dataModel.insertMany(dataToBeUploaded);
+      console.log("Data uploading to database !! May take some time !!");
 
-      console.log("Data uploaded");
+      const batchSize = 10000;
+      for (let i = 0; i < req.listOfRows.length; i += batchSize) {
+        const batch = req.listOfRows.slice(i, i + batchSize);
+        await dataModel.insertMany(batch);
+        console.log(`Uploaded batch ${i / batchSize + 1}`);
+      }
+
+      console.log("Data uploaded to database !!");
 
       res.status(201).json({
         message: "File upload successful!!",
@@ -150,6 +141,7 @@ exports.saveData = async (req, res, next) => {
 
 exports.getReqPerMin = async (req, res, next) => {
   try {
+    console.log("Fetching data from database !!");
     let data = await dataModel.find({
       reqTime: {
         $gte: req.body.startDate,
@@ -160,6 +152,9 @@ exports.getReqPerMin = async (req, res, next) => {
     req.requiredData = data;
 
     let reqPerMin = new Map();
+
+    console.log("Processing data to get request per minute !!");
+
     data.forEach((req) => {
       let reqTime = new Date(req.reqTime.getTime() - 19800000);
       reqTime = helperFunctions.fomatTime(reqTime);
@@ -181,6 +176,8 @@ exports.tableData = async (req, res, next) => {
   try {
     let data = req.requiredData;
     let allTableData = new Map();
+
+    console.log("Processing data to get table data !!");
 
     data.forEach((ele) => {
       if (allTableData.has(ele.reqURL)) {
@@ -235,7 +232,7 @@ exports.tableData = async (req, res, next) => {
 
     // [total request for that api, avg processing time, p95, ignore this value]
     req.allTableData = Object.fromEntries(allTableData);
-    console.log(allTableData);
+    // console.log(allTableData);
 
     next();
   } catch (err) {
@@ -251,7 +248,7 @@ exports.tableData = async (req, res, next) => {
 exports.filterData = async (req, res) => {
   try {
     let data = req.requiredData;
-
+    console.log("Processing data to get web and mobile data !!");
     var webcnt = 0,
       mobilecnt = 0;
     ResponseWeb = new Map();

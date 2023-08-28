@@ -31,16 +31,43 @@ exports.fomatTimeHrMin = (reqTime) => {
 properties of each element into the `allDates` array. It then creates two variables called `minDate`
 and `maxDate` and sets them to the minimum and maximum values of the `allDates` array. It then sets
 the `minDate` and `maxDate` properties of the `req` object to the `minDate` and `maxDate` variables. */
+//! exports.findExtremeDates = (req, listOfRows) => {
+//   let allDates = [];
+
+//   listOfRows.forEach((ele) => {
+//     allDates.push(ele.reqTime);
+//     allDates.push(ele.resTime);
+//   });
+
+//   let minDate = new Date(Math.min.apply(null, allDates));
+//   let maxDate = new Date(Math.max.apply(null, allDates));
+//   req.minDate = minDate;
+//   req.maxDate = maxDate;
+//! };
+
 exports.findExtremeDates = (req, listOfRows) => {
-  let allDates = [];
+  if (listOfRows.length === 0) {
+    req.minDate = null;
+    req.maxDate = null;
+    return;
+  }
 
-  listOfRows.forEach((ele) => {
-    allDates.push(ele.reqTime);
-    allDates.push(ele.resTime);
-  });
+  let minDate = new Date(listOfRows[0].reqTime);
+  let maxDate = new Date(listOfRows[0].resTime);
 
-  let minDate = new Date(Math.min.apply(null, allDates));
-  let maxDate = new Date(Math.max.apply(null, allDates));
+  for (let i = 1; i < listOfRows.length; i++) {
+    const reqTime = new Date(listOfRows[i].reqTime);
+    const resTime = new Date(listOfRows[i].resTime);
+
+    if (reqTime < minDate) {
+      minDate = reqTime;
+    }
+
+    if (resTime > maxDate) {
+      maxDate = resTime;
+    }
+  }
+
   req.minDate = minDate;
   req.maxDate = maxDate;
 };
